@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#fafaf9">
+<title>Swap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fafaf9; --surface:#ffffff; --ink:#141414; --muted:#74736f; --line:#e8e7e3;
+  --accent:#141414; --accent-ink:#ffffff; --look:#b4532a; --offer:#2f6b4f; --tile:#efeeea;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#121211; --surface:#1a1a19; --ink:#f2f1ee; --muted:#8d8c88; --line:#2a2a28;
+    --accent:#f2f1ee; --accent-ink:#121211; --look:#e2895d; --offer:#6fbf98; --tile:#222220;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+.wordmark{font-weight:600;font-size:20px;letter-spacing:-.02em;margin:0}
+
+/* buttons & fields */
+.btn{background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent);border-radius:999px;padding:9px 18px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.btn:hover{opacity:.85}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--ink);opacity:1}
+.btn.danger{background:transparent;color:#b3261e;border-color:var(--line)}
+.btn.small{padding:6px 13px;font-size:13px}
+input[type=text],input[type=search],select,textarea{width:100%;background:transparent;border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--ink)}
+textarea{resize:vertical;min-height:84px}
+label.f{display:block;font-size:12px;font-weight:500;color:var(--muted);margin:16px 0 6px;letter-spacing:.02em}
+label.f .opt{font-weight:400}
+.msg{color:#b3261e;font-size:13px;min-height:18px;margin:10px 0 0}
+.hint{color:var(--muted);font-size:13px}
+
+/* gate */
+.gate{min-height:100vh;display:grid;place-items:center;padding:24px}
+.gate form{width:100%;max-width:340px;text-align:center}
+.gate .wordmark{font-size:34px;margin-bottom:10px}
+.gate .lede{color:var(--muted);margin:0 0 24px}
+.gate input{text-align:center;margin-bottom:12px}
+.gate .btn{width:100%}
+
+/* header */
+.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:60px}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:22px 0 8px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{background:transparent;border:0;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--muted);font-size:14px}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.controls .grow{flex:1 1 180px;min-width:140px}
+.controls select{width:auto;flex:0 0 auto}
+.chk{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:28px 20px;padding:18px 0 80px}
+@media(max-width:520px){.grid{grid-template-columns:repeat(2,1fr);gap:22px 12px}.wrap{padding:0 14px}}
+.card{cursor:pointer;outline:none}
+.ph{position:relative;aspect-ratio:4/5;background:var(--tile);border-radius:14px;overflow:hidden;display:grid;place-items:center}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.card:hover .ph img{transform:scale(1.03)}
+.card:focus-visible .ph{box-shadow:0 0 0 2px var(--ink)}
+.ph-empty{color:var(--muted);font-size:13px;padding:0 14px;text-align:center}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 10px;background:rgba(255,255,255,.94);color:#141414}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.tag.looking::before{background:var(--look)}
+.tag.offering::before{background:var(--offer)}
+.ph .tag{position:absolute;left:10px;top:10px}
+.tag.done{background:var(--tile);color:var(--muted)}
+.tag.done::before{display:none}
+.card.done .ph img{opacity:.4}
+.card.done h3{color:var(--muted);text-decoration:line-through}
+.meta{padding:10px 2px 0}
+.meta h3{font-size:15px;font-weight:500;margin:0;line-height:1.35;overflow-wrap:anywhere}
+.sub{color:var(--muted);font-size:13px;margin:2px 0 0}
+.by{color:var(--muted);font-size:12px;margin:6px 0 0}
+.empty{text-align:center;color:var(--muted);padding:70px 0}
+
+/* dialogs */
+dialog{border:0;padding:0;background:var(--surface);color:var(--ink);width:min(560px,calc(100% - 24px));max-height:92vh;border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.22);overflow:auto}
+dialog::backdrop{background:rgba(20,20,20,.4);backdrop-filter:blur(2px)}
+@media(max-width:600px){dialog{margin:auto 0 0;width:100%;max-width:none;border-radius:20px 20px 0 0;max-height:94vh}}
+.sheet{padding:24px}
+.sheet h2{margin:10px 0 0;font-size:22px;font-weight:600;letter-spacing:-.01em;overflow-wrap:anywhere}
+.x{position:absolute;right:14px;top:12px;z-index:2;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#141414;font-size:20px;line-height:1;cursor:pointer}
+.big{display:block;width:100%;max-height:60vh;object-fit:cover;background:var(--tile)}
+.sheet .tags{display:flex;gap:6px;flex-wrap:wrap}
+.sheet .tag{background:var(--tile);color:var(--ink)}
+.kv{margin:18px 0 0;font-size:14px}
+.kv b{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:2px;letter-spacing:.02em}
+.kv p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+hr{border:0;border-top:1px solid var(--line);margin:24px 0 8px}
+.reply{padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+.reply:last-child{border-bottom:0}
+.reply .who{font-weight:500}
+.reply .when{color:var(--muted);font-size:12px;margin-left:6px}
+.reply p{margin:3px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kind{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.kind input{position:absolute;opacity:0;pointer-events:none}
+.kind label{border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;cursor:pointer;font-weight:500;font-size:14px}
+.kind input:checked+label{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.kind input:focus-visible+label{box-shadow:0 0 0 2px var(--ink)}
+.drop{display:flex;align-items:center;gap:14px;border:1px dashed var(--line);border-radius:12px;padding:12px;cursor:pointer}
+.drop:hover{border-color:var(--ink)}
+.drop img{width:64px;height:80px;object-fit:cover;border-radius:8px;background:var(--tile)}
+.drop .t{font-size:14px}
+.drop .s{color:var(--muted);font-size:12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90vw}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate" hidden>
+  <form id="gateForm" autocomplete="off">
+    <h1 class="wordmark" data-name>Swap</h1>
+    <p class="lede">A small, private clothes swap.<br>Enter your invite code to come in.</p>
+    <input type="text" id="gateCode" placeholder="Invite code" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+    <button class="btn" id="gateBtn">Enter</button>
+    <p class="msg" id="gateMsg" role="alert"></p>
+    <p class="hint" id="demoNote" hidden>Demo mode: any code works, nothing is saved.</p>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="top">
+    <div class="wrap bar">
+      <h1 class="wordmark" data-name>Swap</h1>
+      <button class="btn" id="newBtn">New post</button>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="controls">
+      <div class="seg" id="kindSeg">
+        <button type="button" data-kind="all" aria-pressed="true">All</button>
+        <button type="button" data-kind="looking" aria-pressed="false">Looking for</button>
+        <button type="button" data-kind="offering" aria-pressed="false">Offering</button>
+      </div>
+      <input class="grow" type="search" id="q" placeholder="Search" aria-label="Search">
+      <select id="cat" aria-label="Category"><option value="">All categories</option></select>
+      <label class="chk"><input type="checkbox" id="showDone"> Show completed</label>
+    </section>
+    <section id="grid" class="grid" aria-live="polite"></section>
+    <p id="empty" class="empty" hidden>Nothing here yet. Be the first to post.</p>
+  </main>
+</div>
+
+<dialog id="compose">
+  <form id="composeForm" class="sheet" autocomplete="off">
+    <button type="button" class="x" data-close aria-label="Close" style="position:absolute">×</button>
+    <h2 style="margin-top:0">New post</h2>
+    <div class="kind">
+      <input type="radio" name="kind" id="k1" value="looking" checked><label for="k1">I'm looking for</label>
+      <input type="radio" name="kind" id="k2" value="offering"><label for="k2">I'm offering</label>
+    </div>
+    <label class="f" for="fTitle">What is it?</label>
+    <input type="text" id="fTitle" maxlength="80" placeholder="e.g. Black wool overcoat" required>
+    <div class="two">
+      <div><label class="f" for="fCat">Category</label><select id="fCat"></select></div>
+      <div><label class="f" for="fSize">Size <span class="opt">(optional)</span></label><input type="text" id="fSize" maxlength="20" placeholder="M / UK 10 / 42"></div>
+    </div>
+    <label class="f" for="fBody">Details <span class="opt">(optional)</span></label>
+    <textarea id="fBody" maxlength="1000" placeholder="Colour, condition, brand, anything useful"></textarea>
+    <label class="f" for="fSwap">Happy to swap for <span class="opt">(optional)</span></label>
+    <input type="text" id="fSwap" maxlength="200" placeholder="e.g. a knit jumper, size S">
+    <label class="f">Photo <span class="opt">(optional, compressed automatically)</span></label>
+    <label class="drop" for="fPhoto">
+      <img id="pPrev" alt="" hidden>
+      <div><div class="t" id="pTitle">Add a photo</div><div class="s" id="pInfo">JPG, PNG or WebP</div></div>
+    </label>
+    <input type="file" id="fPhoto" accept="image/*" hidden>
+    <div class="two">
+      <div><label class="f" for="fName">Your name</label><input type="text" id="fName" maxlength="30" required></div>
+      <div><label class="f" for="fContact">Contact <span class="opt">(optional)</span></label><input type="text" id="fContact" maxlength="100" placeholder="email / @handle"></div>
+    </div>
+    <p class="hint" style="margin:6px 0 0">Anyone with the invite code can see your name and contact.</p>
+    <p class="msg" id="composeMsg" role="alert"></p>
+    <div class="row"><button class="btn" id="postBtn">Post</button><button type="button" class="btn ghost" data-close>Cancel</button></div>
+  </form>
+</dialog>
+
+<dialog id="detail"></dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+'use strict';
+
+const cfg = window.SWAP_CONFIG || {};
+const NAME = cfg.APP_NAME || 'Swap';
+const DEMO = !cfg.SUPABASE_URL || /YOUR-PROJECT/.test(cfg.SUPABASE_URL) || !window.supabase;
+const CATS = ['Tops','Knitwear','Jackets & coats','Dresses','Trousers & jeans','Skirts','Shoes','Bags & accessories','Other'];
+
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch { return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch {} },
+  del(k){ try { localStorage.removeItem(k); } catch {} }
+};
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random()*16|0; return (c==='x'?r:(r&3|8)).toString(16); }));
+
+function ago(iso){
+  const s = Math.max(1, (Date.now() - new Date(iso).getTime()) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  if (s < 604800) return Math.floor(s/86400) + 'd ago';
+  return new Date(iso).toLocaleDateString(undefined, {day:'numeric', month:'short'});
+}
+const kb = n => n < 1024*1024 ? Math.round(n/1024) + ' KB' : (n/1024/1024).toFixed(1) + ' MB';
+const kindLabel = k => k === 'looking' ? 'Looking for' : 'Offering';
+
+let toastTimer;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('on'), 2600);
+}
+
+/* ---------- state ---------- */
+let code = store.get('swap_code') || '';
+let token = store.get('swap_token');
+if (!token) { token = uuid(); store.set('swap_token', token); }
+const state = { posts: [], kind: 'all', q: '', cat: '', showDone: false };
+
+/* ---------- backend (Supabase or demo) ---------- */
+function photoUrl(path){
+  if (!path) return '';
+  if (/^(blob:|data:)/.test(path)) return path;
+  return cfg.SUPABASE_URL + '/storage/v1/object/public/photos/' + path;
+}
+
+function supaApi(){
+  const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY, { auth: { persistSession: false } });
+  const rpc = async (fn, args) => { const { data, error } = await sb.rpc(fn, args); if (error) throw error; return data; };
+  return {
+    verify: async c => (await rpc('verify_code', { p_code: c })) === true,
+    list: async () => (await rpc('list_posts', { p_code: code, p_token: token })) || [],
+    create: async p => rpc('create_post', {
+      p_code: code, p_token: token, p_kind: p.kind, p_title: p.title, p_body: p.body, p_size: p.size,
+      p_category: p.category, p_swap_for: p.swap_for, p_author: p.author, p_contact: p.contact, p_photo_path: p.photo_path || ''
+    }),
+    replies: async id => (await rpc('list_replies', { p_code: code, p_post_id: id })) || [],
+    reply: async (id, author, body) => rpc('create_reply', { p_code: code, p_post_id: id, p_author: author, p_body: body }),
+    setClosed: async (id, closed) => rpc('set_closed', { p_code: code, p_post_id: id, p_token: token, p_closed: closed }),
+    remove: async id => rpc('delete_post', { p_code: code, p_post_id: id, p_token: token }),
+    upload: async blob => {
+      const path = uuid() + '.jpg';
+      const { error } = await sb.storage.from('photos').upload(path, blob, { contentType: 'image/jpeg', cacheControl: '31536000' });
+      if (error) throw error;
+      return path;
+    }
+  };
+}
+
+function demoApi(){
+  const h = 3600e3, now = Date.now();
+  const iso = ms => new Date(now - ms).toISOString();
+  let posts = [
+    { id:'d1', created_at: iso(2*h), kind:'looking', title:'Black wool overcoat', body:'Mid-length, preferably single-breasted. Decent condition is fine.', size:'M', category:'Jackets & coats', swap_for:'A vintage denim jacket, size M', author:'Maya', contact:'maya@example.com', photo_path:null, closed:false, is_mine:false },
+    { id:'d2', created_at: iso(5*h), kind:'offering', title:'Cream cable-knit jumper', body:'Worn twice. Lovely heavy wool, a bit too big for me.', size:'L', category:'Knitwear', swap_for:'Open to offers', author:'Sam', contact:'@sam.swaps', photo_path:null, closed:false, is_mine:false },
+    { id:'d3', created_at: iso(26*h), kind:'offering', title:'White leather trainers', body:'Barely worn, UK 8. Clean and boxed.', size:'UK 8', category:'Shoes', swap_for:'', author:'Jo', contact:'', photo_path:null, closed:false, is_mine:false },
+    { id:'d4', created_at: iso(50*h), kind:'looking', title:'Linen shirt, any neutral colour', body:'', size:'S', category:'Tops', swap_for:'A silk scarf', author:'Ana', contact:'ana@example.com', photo_path:null, closed:false, is_mine:false },
+    { id:'d5', created_at: iso(80*h), kind:'offering', title:'Green midi skirt', body:'', size:'10', category:'Skirts', swap_for:'', author:'Priya', contact:'', photo_path:null, closed:true, is_mine:false }
+  ];
+  let replies = { d1: [{ id:'r1', created_at: iso(h), author:'Sam', body:'I have a black Crombie in M, will post a photo tomorrow.' }] };
+  const wait = v => new Promise(r => setTimeout(() => r(v), 120));
+  return {
+    verify: async () => true,
+    list: async () => wait(posts.map(p => ({ ...p, reply_count: (replies[p.id] || []).length }))),
+    create: async p => { const id = 'n' + Date.now(); posts.unshift({ ...p, id, created_at: new Date().toISOString(), closed:false, is_mine:true }); return wait(id); },
+    replies: async id => wait((replies[id] || []).slice()),
+    reply: async (id, author, body) => { (replies[id] = replies[id] || []).push({ id: uuid(), created_at: new Date().toISOString(), author, body }); return wait(true); },
+    setClosed: async (id, closed) => { const p = posts.find(x => x.id === id); if (p) p.closed = closed; return wait(true); },
+    remove: async id => { posts = posts.filter(x => x.id !== id); return wait(true); },
+    upload: async blob => URL.createObjectURL(blob)
+  };
+}
+
+const api = DEMO ? demoApi() : supaApi();
+
+/* ---------- image compression ---------- */
+async function decode(file){
+  try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch {
+    return await new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = () => rej(new Error('decode'));
+      img.src = URL.createObjectURL(file);
+    });
+  }
+}
+async function compress(file, maxSide = 1200, target = 250 * 1024){
+  const img = await decode(file);
+  const w = img.width || img.naturalWidth, h = img.height || img.naturalHeight;
+  if (!w || !h) throw new Error('decode');
+  let blob;
+  for (const scale of [1, .85, .7, .55]) {
+    const s = Math.min(1, maxSide / Math.max(w, h)) * scale;
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(w * s)); c.height = Math.max(1, Math.round(h * s));
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    for (const q of [.82, .72, .62, .52]) {
+      blob = await new Promise(r => c.toBlob(r, 'image/jpeg', q));
+      if (blob && blob.size <= target) return blob;
+    }
+  }
+  if (!blob || blob.size > 580 * 1024) throw new Error('too big');
+  return blob;
+}
+
+/* ---------- rendering ---------- */
+const grid = $('#grid');
+
+function cardHtml(p){
+  const photo = p.photo_path
+    ? `<img src="${esc(photoUrl(p.photo_path))}" alt="" loading="lazy">`
+    : `<span class="ph-empty">${esc(p.category || 'No photo')}</span>`;
+  const sub = [p.size && 'Size ' + p.size, p.category].filter(Boolean).map(esc).join(' · ');
+  const replies = p.reply_count ? ` · ${p.reply_count} repl${p.reply_count == 1 ? 'y' : 'ies'}` : '';
+  return `<article class="card${p.closed ? ' done' : ''}" data-id="${esc(p.id)}" tabindex="0" role="button" aria-label="${esc(p.title)}">
+    <div class="ph">${photo}<span class="tag ${esc(p.kind)}">${kindLabel(p.kind)}</span></div>
+    <div class="meta"><h3>${esc(p.title)}</h3>${sub ? `<p class="sub">${sub}</p>` : ''}
+    <p class="by">${esc(p.author)} · ${ago(p.created_at)}${replies}</p></div>
+  </article>`;
+}
+
+function render(){
+  const q = state.q.trim().toLowerCase();
+  const list = state.posts
+    .filter(p => (state.kind === 'all' || p.kind === state.kind)
+      && (!state.cat || p.category === state.cat)
+      && (state.showDone || !p.closed)
+      && (!q || [p.title, p.body, p.size, p.category, p.swap_for, p.author].some(v => (v || '').toLowerCase().includes(q))))
+    .sort((a, b) => (a.closed - b.closed) || (new Date(b.created_at) - new Date(a.created_at)));
+  grid.innerHTML = list.map(cardHtml).join('');
+  $('#empty').hidden = list.length > 0;
+}
+
+function handleErr(e){
+  if (e && (e.code === '28000' || /invalid code/i.test(e.message || ''))) { lock('That invite code is no longer valid.'); return true; }
+  return false;
+}
+
+async function load(quiet){
+  try { state.posts = await api.list(); render(); }
+  catch (e) { if (!handleErr(e) && !quiet) toast('Couldn\u2019t load posts. Check your connection.'); }
+}
+
+/* ---------- detail ---------- */
+const detail = $('#detail');
+
+function detailHtml(p){
+  const sub = [p.size && 'Size ' + p.size, p.category].filter(Boolean).map(esc).join(' · ');
+  const kv = (label, val) => val ? `<div class="kv"><b>${label}</b><p>${esc(val)}</p></div>` : '';
+  return `<button type="button" class="x" data-close aria-label="Close">×</button>
+    ${p.photo_path ? `<img class="big" src="${esc(photoUrl(p.photo_path))}" alt="">` : ''}
+    <div class="sheet">
+      <div class="tags"><span class="tag ${esc(p.kind)}" style="background:var(--tile);color:var(--ink)">${kindLabel(p.kind)}</span>${p.closed ? '<span class="tag done">Completed</span>' : ''}</div>
+      <h2>${esc(p.title)}</h2>
+      ${sub ? `<p class="sub">${sub}</p>` : ''}
+      <p class="by">${esc(p.author)} · ${ago(p.created_at)}</p>
+      ${kv('Details', p.body)}${kv('Happy to swap for', p.swap_for)}${kv('Contact', p.contact)}
+      ${p.is_mine ? `<div class="row"><button class="btn ghost small" id="doneBtn">${p.closed ? 'Reopen' : 'Mark as completed'}</button><button class="btn danger small" id="delBtn">Delete</button></div>` : ''}
+      <hr>
+      <div id="replies"></div>
+      <form id="replyForm" autocomplete="off">
+        <label class="f" for="rBody">Reply</label>
+        <textarea id="rBody" maxlength="500" placeholder="Write a message" required></textarea>
+        <div class="two" style="margin-top:10px"><input type="text" id="rName" maxlength="30" placeholder="Your name" required><button class="btn" id="rBtn">Send</button></div>
+        <p class="msg" id="rMsg" role="alert"></p>
+      </form>
+    </div>`;
+}
+
+async function loadReplies(id){
+  const box = $('#replies', detail); if (!box) return;
+  try {
+    const rs = await api.replies(id);
+    box.innerHTML = rs.length
+      ? rs.map(r => `<div class="reply"><span class="who">${esc(r.author)}</span><span class="when">${ago(r.created_at)}</span><p>${esc(r.body)}</p></div>`).join('')
+      : '<p class="hint" style="margin:8px 0">No replies yet.</p>';
+  } catch (e) { if (!handleErr(e)) box.innerHTML = '<p class="hint">Couldn\u2019t load replies.</p>'; }
+}
+
+function openDetail(id){
+  const p = state.posts.find(x => x.id === id); if (!p) return;
+  detail.innerHTML = detailHtml(p);
+  $('#rName', detail).value = store.get('swap_name') || '';
+  detail.showModal();
+  loadReplies(id);
+
+  $('#replyForm', detail).addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const name = $('#rName', detail).value.trim(), body = $('#rBody', detail).value.trim();
+    if (!name || !body) return;
+    const btn = $('#rBtn', detail); btn.disabled = true;
+    try {
+      store.set('swap_name', name);
+      await api.reply(id, name, body);
+      $('#rBody', detail).value = '';
+      await loadReplies(id); load(true);
+    } catch (e) { if (!handleErr(e)) $('#rMsg', detail).textContent = 'Couldn\u2019t send. Please try again.'; }
+    btn.disabled = false;
+  });
+  const done = $('#doneBtn', detail);
+  if (done) done.addEventListener('click', async () => {
+    try { await api.setClosed(id, !p.closed); detail.close(); await load(); toast(p.closed ? 'Reopened' : 'Marked as completed'); }
+    catch (e) { if (!handleErr(e)) toast('Something went wrong.'); }
+  });
+  const del = $('#delBtn', detail);
+  if (del) del.addEventListener('click', async () => {
+    if (!confirm('Delete this post? This can\u2019t be undone.')) return;
+    try { await api.remove(id); detail.close(); await load(); toast('Post deleted'); }
+    catch (e) { if (!handleErr(e)) toast('Something went wrong.'); }
+  });
+}
+
+/* ---------- compose ---------- */
+const compose = $('#compose'), form = $('#composeForm');
+let photoBlob = null;
+
+function resetPhoto(){
+  photoBlob = null; $('#fPhoto').value = '';
+  $('#pPrev').hidden = true; $('#pTitle').textContent = 'Add a photo'; $('#pInfo').textContent = 'JPG, PNG or WebP';
+}
+
+$('#fPhoto').addEventListener('change', async e => {
+  const file = e.target.files[0]; if (!file) return;
+  $('#pTitle').textContent = 'Compressing…'; $('#pInfo').textContent = file.name;
+  try {
+    photoBlob = await compress(file);
+    const prev = $('#pPrev'); prev.src = URL.createObjectURL(photoBlob); prev.hidden = false;
+    $('#pTitle').textContent = 'Photo ready';
+    $('#pInfo').textContent = `${kb(file.size)} → ${kb(photoBlob.size)}. Tap to change.`;
+  } catch {
+    resetPhoto(); $('#composeMsg').textContent = 'Couldn\u2019t read that image. Try a JPG or PNG.';
+  }
+});
+
+$('#newBtn').addEventListener('click', () => {
+  $('#composeMsg').textContent = '';
+  $('#fName').value = store.get('swap_name') || '';
+  compose.showModal();
+});
+
+form.addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const msg = $('#composeMsg'); msg.textContent = '';
+  const btn = $('#postBtn'); btn.disabled = true; btn.textContent = 'Posting…';
+  try {
+    const author = $('#fName').value.trim();
+    store.set('swap_name', author);
+    const photo_path = photoBlob ? await api.upload(photoBlob) : '';
+    await api.create({
+      kind: form.kind.value, title: $('#fTitle').value.trim(), body: $('#fBody').value.trim(),
+      size: $('#fSize').value.trim(), category: $('#fCat').value, swap_for: $('#fSwap').value.trim(),
+      author, contact: $('#fContact').value.trim(), photo_path
+    });
+    form.reset(); resetPhoto(); compose.close();
+    await load(); toast('Posted');
+  } catch (e) {
+    if (!handleErr(e)) msg.textContent = 'Couldn\u2019t post. Check your connection and try again.';
+  }
+  btn.disabled = false; btn.textContent = 'Post';
+});
+
+/* ---------- wiring ---------- */
+document.addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) { const d = e.target.closest('dialog'); if (d) d.close(); }
+  else if (e.target.tagName === 'DIALOG') e.target.close();
+});
+grid.addEventListener('click', e => { const c = e.target.closest('.card'); if (c) openDetail(c.dataset.id); });
+grid.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { const c = e.target.closest('.card'); if (c) { e.preventDefault(); openDetail(c.dataset.id); } } });
+
+$('#kindSeg').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  state.kind = b.dataset.kind;
+  document.querySelectorAll('#kindSeg button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  render();
+});
+$('#q').addEventListener('input', e => { state.q = e.target.value; render(); });
+$('#cat').addEventListener('change', e => { state.cat = e.target.value; render(); });
+$('#showDone').addEventListener('change', e => { state.showDone = e.target.checked; render(); });
+
+/* ---------- gate ---------- */
+function lock(message){
+  store.del('swap_code'); code = '';
+  $('#app').hidden = true; $('#gate').hidden = false;
+  $('#gateMsg').textContent = message || '';
+  if (detail.open) detail.close(); if (compose.open) compose.close();
+}
+function enter(){
+  $('#gate').hidden = true; $('#app').hidden = false;
+  load();
+}
+$('#gateForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const c = $('#gateCode').value.trim(); if (!c) return;
+  const btn = $('#gateBtn'); btn.disabled = true; $('#gateMsg').textContent = '';
+  try {
+    if (await api.verify(c)) { code = c; store.set('swap_code', c); enter(); }
+    else $('#gateMsg').textContent = 'That code isn\u2019t right. Try again.';
+  } catch { $('#gateMsg').textContent = 'Couldn\u2019t connect. Please try again.'; }
+  btn.disabled = false;
+});
+
+/* ---------- boot ---------- */
+document.title = NAME;
+document.querySelectorAll('[data-name]').forEach(el => el.textContent = NAME);
+for (const c of CATS) {
+  $('#cat').add(new Option(c, c));
+  $('#fCat').add(new Option(c, c));
+}
+$('#demoNote').hidden = !DEMO;
+
+(async () => {
+  if (code) {
+    try { if (await api.verify(code)) return enter(); lock('Please enter the invite code again.'); return; }
+    catch { $('#gate').hidden = false; $('#gateMsg').textContent = 'Couldn\u2019t connect. Please try again.'; return; }
+  }
+  $('#gate').hidden = false;
+})();
+
+setInterval(() => { if (!document.hidden && code && !detail.open && !compose.open) load(true); }, 45000);
+})();
+</script>
+</body>
+</html>
